@@ -1,0 +1,21 @@
+import { router, publicProcedure } from './_core/trpc';
+import * as db from './db'; 
+
+// Main application router
+export const appRouter = router({
+  
+  // Apnar jukto kora feature router
+  feature: router({
+    list: publicProcedure.query(async () => {
+      // db.ts file theke getFeatureItems call kora hocche
+      return db.getFeatureItems();
+    }),
+  }),
+
+  // Vobishotte onnanno router ekhane add korte parben 
+  // jemon: gallery, stories, loveNotes itadi.
+});
+
+// AppRouter type ti export kora holo jate Client-side (React) e 
+// strongly-typed API call kora jay
+export type AppRouter = typeof appRouter;
