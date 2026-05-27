@@ -1,0 +1,48 @@
+import { pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+
+// Users Table (Admin, Email Auth, Facebook Auth handle korar jonno)
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).unique().notNull(),
+  role: varchar('role', { length: 50 }).default('user'), // 'admin' or 'user'
+  authProvider: varchar('auth_provider', { length: 50 }), // 'email' or 'facebook'
+  providerId: varchar('provider_id', { length: 255 }), // Facebook theke asha ID er jonno
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Love Notes Table
+export const loveNotes = pgTable('love_notes', {
+  id: serial('id').primaryKey(),
+  content: text('content').notNull(),
+  authorId: serial('author_id').references(() => users.id),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Stories Table
+export const stories = pgTable('stories', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  content: text('content').notNull(),
+  mediaUrl: text('media_url'), // Story er sathe kono chobi thakle
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Gallery Table (Google Drive link convert korar function mathay rekhe)
+export const gallery = pgTable('gallery', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }),
+  mediaType: varchar('media_type', { length: 50 }).notNull(), // 'image' ba 'video'
+  driveUrl: text('drive_url').notNull(), // Google Drive ba direct link
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+// Map Locations Table
+export const mapLocations = pgTable('map_locations', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  latitude: varchar('latitude', { length: 100 }).notNull(),
+  longitude: varchar('longitude', { length: 100 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
