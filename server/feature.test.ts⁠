@@ -1,0 +1,32 @@
+import { expect, describe, it, vi } from 'vitest'; // Jodi Jest use koren tobe 'vi' er bodole 'jest' hobe
+import { appRouter } from './routers';
+import * as db from './db';
+
+// Database call mock kora hocche jate original database-e hit na kore
+vi.mock('./db', () => ({
+  getFeatureItems: vi.fn(),
+}));
+
+describe("Feature", () => {
+  it("should fetch items", async () => {
+    // 1. Mock data setup kora
+    const mockItems = [
+      { id: 1, title: 'Test Feature 1' },
+      { id: 2, title: 'Test Feature 2' }
+    ];
+    
+    // getFeatureItems function call hole ei mock data return korbe
+    vi.mocked(db.getFeatureItems).mockResolvedValue(mockItems);
+
+    // 2. tRPC router er ekta caller toiri kora (context chara)
+    const caller = appRouter.createCaller({});
+
+    // 3. Router call kora
+    const result = await caller.feature.list();
+
+    // 4. Test code er expectations/assertions
+    expect(db.getFeatureItems).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(mockItems);
+    expect(result.length).toBe(2);
+  });
+});
